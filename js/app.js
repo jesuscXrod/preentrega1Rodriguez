@@ -1,46 +1,64 @@
-//Mensaje de bienvenida (No estará cuando se cree el HTML y CSS)
-alert('Bienvenidos a la tienda de videojuegos virtual :)')
-
-//Prompt para pedir validacion de si es mayor de edad o no.
+// Variables
+let carrito = []
 let validacion = prompt(`¿Eres mayor de edad? 
     1: Si
     2: No`)
-
 let cerrarMenu = false
+const listaJuegos = []
 
-//Intenté crear un "filtro" para darle un poquito mas de vida, sé que hay mejores formas de crear filtros con JS que aún no vimos
-function filtrarJuegos ( a ){
-    let mayorDeEdad = a
-
-    //Muestra todos los juegos
-    if(mayorDeEdad){
-        console.info(`Juego: Assassins Creed: Valhalla
-        Precio: 10USD
-        Categoria: A
-
-        Juego: The Legend of Zelda: Tears of the Kingdom
-        Precio: 10USD
-        Categoria: E`)
-    } else {
-        //solo muestra los que no sean Categoria A: Adult por ser menor de edad
-        console.info(`Juego: The Legend of Zelda: Tears of the Kingdom
-        Precio: 10USD
-        Categoria: E`)
+//Constructor
+class Juego{
+    constructor(categoria,id,precio,titulo){
+        this.categoria = categoria,
+        this.id = id,
+        this.precio = precio,
+        this.titulo = titulo
     }
 }
 
-/*Un ciclo do...while para hacer que el usario coloque una opcion correcta sea 1 o 2.*/
+const juego1 = new Juego(1, 1, 15,"Assassins Creed: Valhalla")
+const juego2 = new Juego(2, 2, 25,"The Legend of Zelda: Tears of the Kingdom")
+const juego3 = new Juego(1, 3, 50,"Diablo IV")
+const juego4 = new Juego(2, 4, 15,"The Sims 4")
+
+listaJuegos.push(juego1, juego2, juego3, juego4)
+
+// alerts
+alert('Bienvenidos a la tienda de videojuegos virtual :)')
+
+//Funciones
+function catalogoCompleto(array){
+        for(let juego of array){
+            console.log(`Titulo: ${juego.titulo} y su precio es de ${juego.precio}USD`)
+        }
+}
+
+function filtroCategoria(arr){
+    let filtroMenor = arr.filter(
+        (juego) => {return juego.categoria === 2}
+    )
+    catalogoCompleto(filtroMenor)
+}
+
+function filtrarJuegos ( a ){
+    let mayorDeEdad = a
+
+    if(mayorDeEdad){
+        catalogoCompleto(listaJuegos)
+    } else {
+        filtroCategoria(listaJuegos)
+    }
+}
+/*hace que el usario coloque una opcion correcta sea 1 o 2.*/
 do{
-    /*Lo que se mostrará si el usuario es mayor de edad o no
-    En caso de no colocar una opción correcta, se volverá a preguntar si es mayor de edad o no*/
-    switch(validacion){
+        switch(validacion){
         case "1":
             console.log('Eres mayor de edad, puedes comprar videojuegos de cualquier categoria')
             cerrarMenu = true
             filtrarJuegos(true)
             break
         case "2":
-            console.log('Eres menor de edad, puedes comprar videojuegos T o menor')
+            console.log('Eres menor de edad, te mostraremos los videojuegos disponibles para ti')
             cerrarMenu = true
             filtrarJuegos(false)
             break
