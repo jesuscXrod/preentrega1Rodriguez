@@ -23,6 +23,10 @@ const juego4 = new Juego(2, 4, 15,"The Sims 4")
 
 listaJuegos.push(juego1, juego2, juego3, juego4)
 
+let filtroMenor = listaJuegos.filter(
+    (juego) => {return juego.categoria === 2}
+)
+
 // alerts
 alert('Bienvenidos a la tienda de videojuegos virtual :)')
 
@@ -33,20 +37,13 @@ function catalogoCompleto(array){
         }
 }
 
-function filtroCategoria(arr){
-    let filtroMenor = arr.filter(
-        (juego) => {return juego.categoria === 2}
-    )
-    catalogoCompleto(filtroMenor)
-}
-
 function filtrarJuegos ( a ){
     let mayorDeEdad = a
 
     if(mayorDeEdad){
         catalogoCompleto(listaJuegos)
     } else {
-        filtroCategoria(listaJuegos)
+        catalogoCompleto(filtroMenor)
     }
 }
 /*hace que el usario coloque una opcion correcta sea 1 o 2.*/
@@ -63,7 +60,7 @@ do{
             filtrarJuegos(false)
             break
         default:
-            console.log('Inserte una opcion correcta mostradas en el menu')
+            console.log('Ingrese una opcion correcta mostradas en el menu')
             validacion = prompt(`¿Eres mayor de edad? 
             1: Si
             2: No`)
