@@ -58,6 +58,50 @@ function verCarrito(){
     }
 }
 
+//Funcion agregar juego al carrito
+function agregarJuego(validacionEdad){
+    
+    if(validacionEdad){
+        carritoFiltrado(listaJuegos)
+    }else{
+        carritoFiltrado(filtroMenor)
+    }
+    
+    function carritoFiltrado(array){
+        let juegoID = parseInt(prompt("Ingrese el ID del juego que quieres agregar al carrito"))
+        
+        array.forEach(element => {
+            if(juegoID === element.id){
+                carrito.push(element)
+                console.log('Juego agregado correctamente')
+            }
+        });
+    }
+}
+
+//Funcion eliminar juego del carrito
+function eliminarJuego(array) {
+    if (array.length === 0) {
+    console.log('El carrito de compras está vacío. No hay juegos para eliminar.');
+    return;
+    }
+
+    console.log('Juegos en el carrito:');
+    catalogoCompleto(array);
+
+    let juegoID = parseInt(prompt('Ingrese el ID del juego que desea eliminar del carrito'));
+
+    let juegoIndex = array.findIndex((juego) => juego.id === juegoID);
+
+    if (juegoIndex === -1) {
+    console.log('No se encontró ningún juego con ese ID en el carrito.');
+    return;
+    }
+
+    let juegoEliminado = array.splice(juegoIndex, 1)[0];
+    console.log(`Se ha eliminado el juego "${juegoEliminado.titulo}" del carrito.`);
+}  
+
 /*hace que el usario coloque una opcion correcta sea 1 o 2.*/
 do{
         switch(validacion){
@@ -113,47 +157,3 @@ function menuTienda(edad){
         }
     } while (cerrarMenu2 != true)
 }
-
-
-function agregarJuego(validacionEdad){
-    
-    if(validacionEdad){
-        carritoFiltrado(listaJuegos)
-    }else{
-        carritoFiltrado(filtroMenor)
-    }
-    
-    function carritoFiltrado(array){
-        let juegoID = parseInt(prompt("Ingrese el ID del juego que quieres agregar al carrito"))
-        
-        array.forEach(element => {
-            if(juegoID === element.id){
-                carrito.push(element)
-                console.log('Juego agregado correctamente')
-            }
-        });
-    }
-
-}
-
-function eliminarJuego(array) {
-    if (array.length === 0) {
-    console.log('El carrito de compras está vacío. No hay juegos para eliminar.');
-    return;
-    }
-
-    console.log('Juegos en el carrito:');
-    catalogoCompleto(array);
-
-    let juegoID = parseInt(prompt('Ingrese el ID del juego que desea eliminar del carrito'));
-
-    let juegoIndex = array.findIndex((juego) => juego.id === juegoID);
-
-    if (juegoIndex === -1) {
-    console.log('No se encontró ningún juego con ese ID en el carrito.');
-    return;
-    }
-
-    let juegoEliminado = array.splice(juegoIndex, 1)[0];
-    console.log(`Se ha eliminado el juego "${juegoEliminado.titulo}" del carrito.`);
-}  
