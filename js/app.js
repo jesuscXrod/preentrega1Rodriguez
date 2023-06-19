@@ -27,16 +27,14 @@ let filtroMenor = listaJuegos.filter(
     (juego) => {return juego.categoria === 2}
 )
 
-// alerts
-alert('Bienvenidos a la tienda de videojuegos virtual :)')
-
 //Funciones
 function catalogoCompleto(array){
-        for(let juego of array){
-            console.log(`Titulo: ${juego.titulo} y su precio es de ${juego.precio}USD`)
-        }
+    for(let juego of array){
+        console.log(`Titulo: ${juego.titulo} y su precio es de ${juego.precio}USD y su ID en la tienda es: ${juego.id}`)
+    }
 }
 
+//filtro segun edad
 function filtrarJuegos ( a ){
     let mayorDeEdad = a
 
@@ -46,24 +44,106 @@ function filtrarJuegos ( a ){
         catalogoCompleto(filtroMenor)
     }
 }
+
+//Carrito
+function verCarrito(){
+    if(carrito.length === 0){
+        console.log('No tienes ningun juego en el carrito de compras')
+    }else if(carrito.length === 1){
+        console.log(`Tu carrito de compras tiene: ${carrito.length} juego`)
+        catalogoCompleto(carrito)
+    }else{
+        console.log(`Tu carrito de compras tiene: ${carrito.length} juegos`)
+        catalogoCompleto(carrito)
+    }
+}
+
 /*hace que el usario coloque una opcion correcta sea 1 o 2.*/
 do{
         switch(validacion){
         case "1":
             console.log('Eres mayor de edad, puedes comprar videojuegos de cualquier categoria')
             cerrarMenu = true
-            filtrarJuegos(true)
+            menuTienda(true)
             break
         case "2":
             console.log('Eres menor de edad, te mostraremos los videojuegos disponibles para ti')
             cerrarMenu = true
-            filtrarJuegos(false)
+            menuTienda(false)
             break
         default:
-            console.log('Ingrese una opcion correcta mostradas en el menu')
+            console.log('Ingrese una opcion correcta mostrada en el menu')
             validacion = prompt(`¿Eres mayor de edad? 
             1: Si
             2: No`)
             break
         }
 } while (cerrarMenu != true)
+
+function menuTienda(edad){
+    let cerrarMenu2 = false
+    
+    do{
+    let opcionMenu = prompt(`Bienvenido/a al menu, ingrese una opción para realizar la acción deseada:
+        1: Ver catalogo completo
+        2: Agregar un juego al carrito
+        3: Eliminar un juego del carrito
+        4: Ver el carrito
+        5: Salir del menu
+        `)
+        switch(opcionMenu){
+        case "1":
+            filtrarJuegos(edad)
+        break
+        case "2":
+            agregarJuego(edad)
+        break
+        case "3":
+            eliminarJuego(carrito)
+        break
+        case "4":
+            verCarrito()
+        break
+        case "5":
+            alert('Gracias por entrar en nuestra tienda virtual')
+            cerrarMenu2 = true
+        break
+        default:
+            console.log('Por favor ingrese una opcion valida')
+        }
+    } while (cerrarMenu2 != true)
+}
+
+
+function agregarJuego(validacionEdad){
+    
+    if(validacionEdad){
+        carritoFiltrado(listaJuegos)
+    }else{
+        carritoFiltrado(filtroMenor)
+    }
+    
+    function carritoFiltrado(array){
+        let juegoID = parseInt(prompt("Ingrese el ID del juego que quieres agregar al carrito"))
+        
+        array.forEach(element => {
+            if(juegoID === element.id){
+                carrito.push(element)
+                console.log('Juego agregado correctamente')
+            }
+        });
+    }
+
+}
+
+function eliminarJuego(array){
+    console.log(`Estos son los juegos en tu carrito`)
+    catalogoCompleto(array)
+
+    let borrarJuegoID = parseInt(prompt("Ingrese el ID del juego que quieres eliminar del carrito"))
+    let arrayID = array.map(juego => juego.id)
+    let indice = arrayID.indexOf(borrarJuegoID)
+
+    array.splice(indice, 1)
+}
+
