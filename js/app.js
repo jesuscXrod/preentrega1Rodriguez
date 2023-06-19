@@ -136,14 +136,24 @@ function agregarJuego(validacionEdad){
 
 }
 
-function eliminarJuego(array){
-    console.log(`Estos son los juegos en tu carrito`)
-    catalogoCompleto(array)
+function eliminarJuego(array) {
+    if (array.length === 0) {
+    console.log('El carrito de compras está vacío. No hay juegos para eliminar.');
+    return;
+    }
 
-    let borrarJuegoID = parseInt(prompt("Ingrese el ID del juego que quieres eliminar del carrito"))
-    let arrayID = array.map(juego => juego.id)
-    let indice = arrayID.indexOf(borrarJuegoID)
+    console.log('Juegos en el carrito:');
+    catalogoCompleto(array);
 
-    array.splice(indice, 1)
-}
+    let juegoID = parseInt(prompt('Ingrese el ID del juego que desea eliminar del carrito'));
 
+    let juegoIndex = array.findIndex((juego) => juego.id === juegoID);
+
+    if (juegoIndex === -1) {
+    console.log('No se encontró ningún juego con ese ID en el carrito.');
+    return;
+    }
+
+    let juegoEliminado = array.splice(juegoIndex, 1)[0];
+    console.log(`Se ha eliminado el juego "${juegoEliminado.titulo}" del carrito.`);
+}  
