@@ -1,25 +1,30 @@
 // Variables
 let carrito = []
-let validacion = prompt(`¿Eres mayor de edad? 
+/*let validacion = prompt(`¿Eres mayor de edad? 
     1: Si
-    2: No`)
+    2: No`)*/
 let cerrarMenu = false
 const listaJuegos = []
+const validacionMayor = document.getElementById("btnMayorEdad")
+const validacionMenor = document.getElementById("btnMenorEdad")
+const catalogo = document.getElementById("catalago")
+
 
 //Constructor
 class Juego{
-    constructor(categoria,id,precio,titulo){
+    constructor(categoria,id,precio,titulo,imagen){
         this.categoria = categoria,
         this.id = id,
         this.precio = precio,
-        this.titulo = titulo
+        this.titulo = titulo,
+        this.imagen = imagen
     }
 }
 
-const juego1 = new Juego(1, 1, 15,"Assassins Creed: Valhalla")
-const juego2 = new Juego(2, 2, 25,"The Legend of Zelda: Tears of the Kingdom")
-const juego3 = new Juego(1, 3, 50,"Diablo IV")
-const juego4 = new Juego(2, 4, 15,"The Sims 4")
+const juego1 = new Juego(1, 1, 15,"Assassins Creed: Valhalla", "assassins-creed-valhalla.png")
+const juego2 = new Juego(2, 2, 25,"The Legend of Zelda: Tears of the Kingdom", "zelda.jpg")
+const juego3 = new Juego(1, 3, 50,"Diablo IV", "diablo-4.png")
+const juego4 = new Juego(2, 4, 15,"The Sims 4", "sims4.webp")
 
 listaJuegos.push(juego1, juego2, juego3, juego4)
 
@@ -30,18 +35,17 @@ let filtroMenor = listaJuegos.filter(
 //Funciones
 function catalogoCompleto(array){
     for(let juego of array){
-        console.log(`Titulo: ${juego.titulo} y su precio es de ${juego.precio}USD y su ID en la tienda es: ${juego.id}`)
-    }
-}
-
-//filtro segun edad
-function filtrarJuegos ( a ){
-    let mayorDeEdad = a
-
-    if(mayorDeEdad){
-        catalogoCompleto(listaJuegos)
-    } else {
-        catalogoCompleto(filtroMenor)
+        let nuevoDiv = document.createElement("div")
+        nuevoDiv.className = "col-12 col-md-6 col-lg-4 my-2"
+        nuevoDiv.innerHTML = `<div id="${juego.id}" class="card" style="width: 18rem;">
+                                    <img class="card-img-top img-fluid" style="height: 200px;"src="img/${juego.imagen}" alt="${juego.titulo}">
+                                    <div class="card-body">
+                                    <h3 class="card-title">${juego.titulo}</h4>
+                                    <p class="${juego.precio <= 2000 && "ofertaLibro"}">Precio: ${juego.precio} USD</p>
+                                    <button id="agregarBtn${juego.id}" class="btn btn-outline-success">Agregar al carrito</button>
+                                    </div>
+                                </div>`
+        catalogo.appendChild(nuevoDiv)
     }
 }
 
@@ -102,32 +106,41 @@ function eliminarJuego(array) {
     console.log(`Se ha eliminado el juego "${juegoEliminado.titulo}" del carrito.`);
 }  
 
-/*hace que el usario coloque una opcion correcta sea 1 o 2.*/
-do{
-        switch(validacion){
-        case "1":
-            console.log('Eres mayor de edad, puedes comprar videojuegos de cualquier categoria')
-            cerrarMenu = true
-            menuTienda(true)
-            break
-        case "2":
-            console.log('Eres menor de edad, te mostraremos los videojuegos disponibles para ti')
-            cerrarMenu = true
-            menuTienda(false)
-            break
-        default:
-            console.log('Ingrese una opcion correcta mostrada en el menu')
-            validacion = prompt(`¿Eres mayor de edad? 
-            1: Si
-            2: No`)
-            break
-        }
-} while (cerrarMenu != true)
+
+//Listeners
+validacionMayor.addEventListener("click", () =>{
+    menuTienda(true)
+    document.getElementById("container-edad").hidden = true;
+})
+
+validacionMenor.addEventListener("click", () =>{
+    menuTienda(false)
+    document.getElementById("container-edad").hidden = true;
+})
+
+//filtro segun edad
+function filtrarJuegos ( a ){
+    let mayorDeEdad = a
+
+    if(mayorDeEdad){
+        catalogoCompleto(listaJuegos)
+
+    } else {
+        catalogoCompleto(filtroMenor)
+    }
+}
+
+
 
 function menuTienda(edad){
-    let cerrarMenu2 = false
-    
-    do{
+    filtrarJuegos(edad)
+
+
+}
+
+/* 
+
+do{
     let opcionMenu = prompt(`Bienvenido/a al menu, ingrese una opción para realizar la acción deseada:
         1: Ver catalogo completo
         2: Agregar un juego al carrito
@@ -137,7 +150,7 @@ function menuTienda(edad){
         `)
         switch(opcionMenu){
         case "1":
-            filtrarJuegos(edad)
+            
         break
         case "2":
             agregarJuego(edad)
@@ -156,4 +169,5 @@ function menuTienda(edad){
             console.log('Por favor ingrese una opcion valida')
         }
     } while (cerrarMenu2 != true)
-}
+
+*/
