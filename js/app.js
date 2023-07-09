@@ -1,173 +1,160 @@
 // Variables
-let carrito = []
-/*let validacion = prompt(`¿Eres mayor de edad? 
-    1: Si
-    2: No`)*/
-let cerrarMenu = false
-const listaJuegos = []
-const validacionMayor = document.getElementById("btnMayorEdad")
-const validacionMenor = document.getElementById("btnMenorEdad")
-const catalogo = document.getElementById("catalago")
+let carrito = [];
+const listaJuegos = [];
 
+const validacionMayor = document.getElementById("btnMayorEdad");
+const validacionMenor = document.getElementById("btnMenorEdad");
+const catalogo = document.getElementById("catalogo");
+const carritoContainer = document.getElementById("carrito-container");
+const testeandoOcultar = document.getElementById("testeandoHide");
 
-//Constructor
-class Juego{
-    constructor(categoria,id,precio,titulo,imagen){
-        this.categoria = categoria,
-        this.id = id,
-        this.precio = precio,
-        this.titulo = titulo,
-        this.imagen = imagen
+// Constructor
+class Juego {
+    constructor(categoria, id, precio, titulo, imagen) {
+        this.categoria = categoria;
+        this.id = id;
+        this.precio = precio;
+        this.titulo = titulo;
+        this.imagen = imagen;
     }
 }
 
-const juego1 = new Juego(1, 1, 15,"Assassins Creed: Valhalla", "assassins-creed-valhalla.png")
-const juego2 = new Juego(2, 2, 25,"The Legend of Zelda: Tears of the Kingdom", "zelda.jpg")
-const juego3 = new Juego(1, 3, 50,"Diablo IV", "diablo-4.png")
-const juego4 = new Juego(2, 4, 15,"The Sims 4", "sims4.webp")
+const juego1 = new Juego(1, 1, 15, "Assassins Creed: Valhalla", "assassins-creed-valhalla.png");
+const juego2 = new Juego(2, 2, 25, "The Legend of Zelda: Tears of the Kingdom", "zelda.jpg");
+const juego3 = new Juego(1, 3, 50, "Diablo IV", "diablo-4.png");
+const juego4 = new Juego(2, 4, 15, "The Sims 4", "sims4.webp");
 
-listaJuegos.push(juego1, juego2, juego3, juego4)
+listaJuegos.push(juego1, juego2, juego3, juego4);
 
-let filtroMenor = listaJuegos.filter(
-    (juego) => {return juego.categoria === 2}
-)
+const filtroMenor = listaJuegos.filter((juego) => juego.categoria === 2);
 
-//Funciones
-function catalogoCompleto(array){
-    for(let juego of array){
-        let nuevoDiv = document.createElement("div")
-        nuevoDiv.className = "col-12 col-md-6 col-lg-4 my-2"
-        nuevoDiv.innerHTML = `<div id="${juego.id}" class="card" style="width: 18rem;">
-                                    <img class="card-img-top img-fluid" style="height: 200px;"src="img/${juego.imagen}" alt="${juego.titulo}">
-                                    <div class="card-body">
-                                    <h3 class="card-title">${juego.titulo}</h4>
-                                    <p class="${juego.precio <= 2000 && "ofertaLibro"}">Precio: ${juego.precio} USD</p>
-                                    <button id="agregarBtn${juego.id}" class="btn btn-outline-success">Agregar al carrito</button>
-                                    </div>
-                                </div>`
-        catalogo.appendChild(nuevoDiv)
-    }
+// Funciones
+
+// Actualiza el catálogo completo en la página
+function catalogoCompleto(array) {
+    catalogo.innerHTML = ""; // Limpiamos el catálogo antes de actualizarlo
+
+    array.forEach((juego) => {
+        const divCarrito = document.createElement("div");
+        divCarrito.className = "col-12 my-2";
+        divCarrito.innerHTML = `<div id="${juego.id}" class="row">
+                                <div class="col-3">
+                                    <img class="img-juego" style="height: 200px;" src="img/${juego.imagen}" alt="${juego.titulo}">
+                                </div>
+                                <div class="col-9">
+                                    <h2>${juego.titulo}</h2>
+                                    <p class="${juego.precio}">Precio: ${juego.precio} USD</p>
+                                    <button id="agregarBtn${juego.id}" class="btn-comprar">Agregar al carrito</button>
+                                </div>
+                            </div>`;
+        catalogo.appendChild(divCarrito);
+
+        const agregarBtn = document.getElementById(`agregarBtn${juego.id}`);
+        agregarBtn.addEventListener("click", () => agregarJuego(juego));
+    });
 }
 
-//Carrito
-function verCarrito(){
-    if(carrito.length === 0){
-        console.log('No tienes ningun juego en el carrito de compras')
-    }else if(carrito.length === 1){
-        console.log(`Tu carrito de compras tiene: ${carrito.length} juego`)
-        catalogoCompleto(carrito)
-    }else{
-        console.log(`Tu carrito de compras tiene: ${carrito.length} juegos`)
-        catalogoCompleto(carrito)
+// Agrega un juego al carrito según la validación de edad
+function agregarJuego(juego) {
+    if (carrito.some((juegoCarrito) => juegoCarrito.id === juego.id)) {
+        console.log("Este juego ya está en el carrito.");
+        return;
     }
+
+    carrito.push(juego);
+    localStorage.setItem("carrito", JSON.stringify(carrito)); // Almacenar el carrito en localStorage
+    actualizarCarritoHTML();
 }
 
-//Funcion agregar juego al carrito
-function agregarJuego(validacionEdad){
-    
-    if(validacionEdad){
-        carritoFiltrado(listaJuegos)
-    }else{
-        carritoFiltrado(filtroMenor)
+// Elimina un juego del carrito
+function eliminarJuego(juegoID) {
+    const juegoIndex = carrito.findIndex((juego) => juego.id === juegoID);
+
+    if (juegoIndex === -1) {
+        console.log("No se encontró ningún juego con ese ID en el carrito.");
+        return;
     }
-    
-    function carritoFiltrado(array){
-        let juegoID = parseInt(prompt("Ingrese el ID del juego que quieres agregar al carrito"))
-        
-        array.forEach(element => {
-            if(juegoID === element.id){
-                carrito.push(element)
-                console.log('Juego agregado correctamente')
-            }
+
+    carrito.splice(juegoIndex, 1);
+    localStorage.setItem("carrito", JSON.stringify(carrito)); // Actualizar el carrito en localStorage
+    actualizarCarritoHTML();
+}
+
+// Filtra los juegos según la edad y actualiza el catálogo
+function filtrarJuegos(mayorDeEdad) {
+    const juegosFiltrados = mayorDeEdad ? listaJuegos : filtroMenor;
+    catalogoCompleto(juegosFiltrados);
+}
+
+// Muestra el menú de la tienda según la validación de edad
+function menuTienda(edad) {
+    filtrarJuegos(edad);
+    carritoContainer.style.display = "block"; // Mostrar el carrito
+    testeandoHide.style.display = "block"; // Mostrar el elemento testeandoHide
+}
+
+// Cargar el carrito almacenado en localStorage
+const carritoStorage = localStorage.getItem("carrito");
+if (carritoStorage) {
+    carrito = JSON.parse(carritoStorage);
+}
+
+// Actualiza el carrito en el HTML
+function actualizarCarritoHTML() {
+    carritoContainer.innerHTML = ""; // Limpiamos el carrito antes de actualizarlo
+
+    if (carrito.length === 0) {
+        carritoContainer.innerHTML = "<p>No tienes ningún juego en el carrito de compras.</p>";
+    } else {
+        carrito.forEach((juego) => {
+            const divCarrito = document.createElement("div");
+            divCarrito.innerHTML = `<div id="${juego.id}" class="row">
+                                <div class="col-3">
+                                    <img class="img-juego" style="height: 100px;" src="img/${juego.imagen}" alt="${juego.titulo}">
+                                </div>
+                                <div class="col-6">
+                                    <h4>${juego.titulo}</h4>
+                                    <p class="${juego.precio}">Precio: ${juego.precio} USD</p>
+                                </div>
+                                <div class="col-3">
+                                    <button class="btn-eliminar" id="eliminarBtn${juego.id}">Eliminar</button>
+                                </div>
+                            </div>`;
+            carritoContainer.appendChild(divCarrito);
+
+            const eliminarBtn = document.getElementById(`eliminarBtn${juego.id}`);
+            eliminarBtn.addEventListener("click", () => eliminarJuego(juego.id));
         });
     }
 }
 
-//Funcion eliminar juego del carrito
-function eliminarJuego(array) {
-    if (array.length === 0) {
-    console.log('El carrito de compras está vacío. No hay juegos para eliminar.');
-    return;
-    }
-
-    console.log('Juegos en el carrito:');
-    catalogoCompleto(array);
-
-    let juegoID = parseInt(prompt('Ingrese el ID del juego que desea eliminar del carrito'));
-
-    let juegoIndex = array.findIndex((juego) => juego.id === juegoID);
-
-    if (juegoIndex === -1) {
-    console.log('No se encontró ningún juego con ese ID en el carrito.');
-    return;
-    }
-
-    let juegoEliminado = array.splice(juegoIndex, 1)[0];
-    console.log(`Se ha eliminado el juego "${juegoEliminado.titulo}" del carrito.`);
-}  
-
-
-//Listeners
-validacionMayor.addEventListener("click", () =>{
-    menuTienda(true)
+// Listeners
+validacionMayor.addEventListener("click", () => {
     document.getElementById("container-edad").hidden = true;
-})
+    menuTienda(true);
+    localStorage.setItem("mayorDeEdad", true);
+});
 
-validacionMenor.addEventListener("click", () =>{
-    menuTienda(false)
+validacionMenor.addEventListener("click", () => {
     document.getElementById("container-edad").hidden = true;
-})
+    menuTienda(false);
+    localStorage.setItem("mayorDeEdad", false);
+});
 
-//filtro segun edad
-function filtrarJuegos ( a ){
-    let mayorDeEdad = a
+const fullCatalogo = localStorage.getItem("mayorDeEdad");
 
-    if(mayorDeEdad){
-        catalogoCompleto(listaJuegos)
-
-    } else {
-        catalogoCompleto(filtroMenor)
-    }
+if (fullCatalogo === "true") {
+    document.getElementById("container-edad").hidden = true;
+    menuTienda(true);
+} else if (fullCatalogo === "false") {
+    document.getElementById("container-edad").hidden = true;
+    menuTienda(false);
+} else {
+    document.getElementById("container-edad").hidden = false;
+    carritoContainer.style.display = "none"; // Ocultar el carrito
 }
 
-
-
-function menuTienda(edad){
-    filtrarJuegos(edad)
-
-
-}
-
-/* 
-
-do{
-    let opcionMenu = prompt(`Bienvenido/a al menu, ingrese una opción para realizar la acción deseada:
-        1: Ver catalogo completo
-        2: Agregar un juego al carrito
-        3: Eliminar un juego del carrito
-        4: Ver el carrito
-        5: Salir del menu
-        `)
-        switch(opcionMenu){
-        case "1":
-            
-        break
-        case "2":
-            agregarJuego(edad)
-        break
-        case "3":
-            eliminarJuego(carrito)
-        break
-        case "4":
-            verCarrito()
-        break
-        case "5":
-            alert('Gracias por entrar en nuestra tienda virtual')
-            cerrarMenu2 = true
-        break
-        default:
-            console.log('Por favor ingrese una opcion valida')
-        }
-    } while (cerrarMenu2 != true)
-
-*/
+// Mostrar el carrito almacenado en el localStorage al cargar la página
+window.addEventListener("DOMContentLoaded", () => {
+    actualizarCarritoHTML();
+});
